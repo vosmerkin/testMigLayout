@@ -1,51 +1,57 @@
 package com.example.migLayout.frameInit;
 
+import com.example.migLayout.services.DownloadUrl;
+import com.example.migLayout.services.ImportExport;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Frame1 extends JFrame implements ActionListener {
-
-
+    private static final String PATH = "jtext.txt";
+    private static final String URL = "http://forum.ru-board.com/e.pl";
+    JTextArea text;
+    JButton button1;
+    JButton button2;
     public Frame1() {
-    }
-
-    private void init() {
-        JFrame frame = new JFrame();
-
-        frame.setTitle("MigLayoutDemo");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 600);
-
         JPanel panel = new JPanel(new MigLayout());
-
-        JButton button1 = new JButton("Button 1");
-//        JTextArea text = new JTextArea();
-
+        button1 = new JButton("Get from file");
+        button2 = new JButton("Getfrom URL");
+        text = new JTextArea(20,60);
         panel.add(button1);
-
-
+        panel.add(button2);
+        panel.add(text);
         button1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                button1.setText(button1.getText() + "+");
+            public void actionPerformed(ActionEvent e){
+                ImportExport ie = new ImportExport();
+                text.setText( ie.importFromFile("./" + PATH));
+            }
+        });
+        button2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                DownloadUrl du = new DownloadUrl();
+                try {
+                    text.setText( du.getByUrl( URL));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
             }
         });
 
-
-        frame.add(panel, BorderLayout.CENTER);
-
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        setTitle("MigLayoutDemo");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(600, 600);
+        add(panel, BorderLayout.CENTER);
+        pack();
+        setLocationRelativeTo(null);
     }
-
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
-
+        ImportExport ie = new ImportExport();
+        text.setText( ie.importFromFile("./" + PATH));
     }
 }
