@@ -12,11 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class Frame1 extends JFrame implements ActionListener {
+public class Frame1 extends JFrame {
     private static final Logger log = LoggerFactory.getLogger(Frame1.class);
     private static final String PATH = "jtext.txt";
-    private static final String URL = "http://forum.ru-board.com/e.pl";
-    JTextArea text;
+    private static final String URL = "http://ya.ru";
+//    private static final String URL = "http://forum.ru-board.com/e.pl";
+    private JTextArea text;
     JButton button1;
     JButton button2;
     public Frame1() {
@@ -53,9 +54,5 @@ public class Frame1 extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent actionEvent) {
-        ImportExport ie = new ImportExport();
-        text.setText( ie.importFromFile("./" + PATH));
-    }
 }
+//TODO Swing EDT, layouts variants, error window
