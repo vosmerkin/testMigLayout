@@ -3,6 +3,8 @@ package com.example.migLayout.frameInit;
 import com.example.migLayout.services.DownloadUrl;
 import com.example.migLayout.services.ImportExport;
 import net.miginfocom.swing.MigLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class Frame1 extends JFrame implements ActionListener {
+    private static final Logger log = LoggerFactory.getLogger(Frame1.class);
     private static final String PATH = "jtext.txt";
     private static final String URL = "http://forum.ru-board.com/e.pl";
     JTextArea text;
@@ -33,11 +36,12 @@ public class Frame1 extends JFrame implements ActionListener {
         button2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 DownloadUrl du = new DownloadUrl();
-                try {
+//                try {
                     text.setText( du.getByUrl( URL));
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+//                } catch (IOException ioException) {
+//                    ioException.printStackTrace();
+//                    log.info("Error");
+//                }
             }
         });
 
