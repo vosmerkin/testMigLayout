@@ -84,6 +84,7 @@ public class Frame1 {
                 new SwingWorker() {
                     @Override
                     protected Object doInBackground() throws Exception {
+                        log.info("createButton clicked");
                         //run add action
                         Name name = new Name(createNameText.getText());
                         String result = crudActions.createAction(name.toJson());

@@ -1,8 +1,13 @@
 package com.example.migLayout.services;
 
 public class Adresses {
-    public static final String CREATE ="http://localhost:8080/CRUDaddnames";
-    public static final String REQUEST ="http://localhost:8080/CRUDgetnames";
-    public static final String UPDATE ="http://localhost:8080/CRUDupdatenames";
-    public static final String DELETE ="http://localhost:8080/CRUDdeletenames";
+
+    private static String host1 = "http://192.168.31.35:8080";
+    private static String host2 = "http://localhost:8080";
+    private static String host = host2;
+    public static final String CREATE = host + "/CRUDaddnames";
+    public static final String REQUEST = host + "/CRUDgetnames";
+    public static final String UPDATE = host + "/CRUDupdatenames";
+    public static final String DELETE = host + "/CRUDdeletenames";
 }
+//curl -XPOST -H "Content-Type:application/json"   --data-raw "{\"id\" : null,\"name\" : \"Peter1\"}" http://localhost:8080/CRUDaddnames
