@@ -57,6 +57,7 @@ public class Frame1 {
         JButton requestButton = new JButton("Request Entry");
         JLabel requestNamelabel = new JLabel("Name");
         JTextArea requestNameText = new JTextArea(1, 10);
+        requestNameText.setToolTipText("Comma delimited id and Name");
         panel.add(requestButton);
         panel.add(requestNamelabel);
         panel.add(requestNameText);
@@ -69,7 +70,7 @@ public class Frame1 {
         panel.add(updateNameText);
 
 
-        JButton deleteButton = new JButton("Request Entry");
+        JButton deleteButton = new JButton("Delete Entry");
         JLabel deleteNamelabel = new JLabel("Name");
         JTextArea deleteNameText = new JTextArea(1, 10);
         panel.add(deleteButton);
@@ -85,10 +86,8 @@ public class Frame1 {
                     @Override
                     protected Object doInBackground() throws Exception {
                         log.info("createButton clicked");
-                        //run add action
                         Name name = new Name(createNameText.getText());
                         String result = crudActions.createAction(name.toJson());
-                        //store response to TextArea
                         responseText.setText(result);
                         return null;
                     }
@@ -100,6 +99,9 @@ public class Frame1 {
                 new SwingWorker() {
                     @Override
                     protected Object doInBackground() throws Exception {
+                        log.info("requestButton clicked");
+                        String result = crudActions.requestAction(requestNameText.getText());
+                        responseText.setText(result);
                         return null;
                     }
                 }.execute();
@@ -110,6 +112,9 @@ public class Frame1 {
                 new SwingWorker() {
                     @Override
                     protected Object doInBackground() throws Exception {
+                        log.info("updateButton clicked");
+                        String result = crudActions.updateAction(updateNameText.getText());
+                        responseText.setText(result);
                         return null;
                     }
                 }.execute();
@@ -120,6 +125,9 @@ public class Frame1 {
                 new SwingWorker() {
                     @Override
                     protected Object doInBackground() throws Exception {
+                        log.info("deleteButton clicked");
+                        String result = crudActions.deleteAction(deleteNameText.getText());
+                        responseText.setText(result);
                         return null;
                     }
                 }.execute();

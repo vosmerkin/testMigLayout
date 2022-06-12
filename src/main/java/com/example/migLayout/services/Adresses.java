@@ -6,8 +6,7 @@ public class Adresses {
     private static String host2 = "http://localhost:8080";
     private static String host = host2;
     public static final String CREATE = host + "/CRUDaddnames";
-    public static final String REQUEST = host + "/CRUDgetnames";
+    public static final String REQUEST = host + "/CRUDgetnames?name=";
     public static final String UPDATE = host + "/CRUDupdatenames";
-    public static final String DELETE = host + "/CRUDdeletenames";
+    public static final String DELETE = host + "/CRUDdeletenames?name=";
 }
-//curl -XPOST -H "Content-Type:application/json"   --data-raw "{\"id\" : null,\"name\" : \"Peter1\"}" http://localhost:8080/CRUDaddnames
