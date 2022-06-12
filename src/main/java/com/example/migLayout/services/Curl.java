@@ -18,27 +18,10 @@ public final class Curl {
 
     private final String endpoint;
 
-    public String getEndpoint() {
-        return endpoint;
-    }
-
     private final HttpMethod method;
 
-    public HttpMethod getMethod() {
-        return method;
-    }
-
     private final String data;
-
-    public String getData() {
-        return data;
-    }
-
     private final Map<String, String> headers;
-
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
 
     private Curl(String endpoint, HttpMethod method, String data, Map<String, String> headers) {
         this.endpoint = endpoint;
@@ -46,6 +29,27 @@ public final class Curl {
         this.data = data;
         this.headers = headers;
     }
+
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+
+    public HttpMethod getMethod() {
+        return method;
+    }
+
+
+    public String getData() {
+        return data;
+    }
+
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
 
     public String call() throws IOException, InterruptedException {
         List<String> command = new ArrayList<>();
