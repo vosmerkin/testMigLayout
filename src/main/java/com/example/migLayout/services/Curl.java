@@ -76,7 +76,7 @@ public final class Curl {
 //            command.add("\"" + data + "\"");
             command.add(data);
         }
-        log.info("curl command {}", command.toString());
+        log.info("curl command {}", command);
         return doCurl(command.toArray(new String[0]));
     }
 
