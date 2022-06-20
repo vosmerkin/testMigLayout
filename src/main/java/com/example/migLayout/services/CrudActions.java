@@ -4,6 +4,8 @@ import com.example.migLayout.entity.Name;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +21,18 @@ public class CrudActions {
                 .data(data)
                 .create()
                 .call();
+
+
+
+        var client = HttpClient.newHttpClient();
+
+        var request = HttpRequest.newBuilder(
+                        URI.create("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"))
+                .header("accept", "application/json")
+                .build();
+
+        var response = client.send(request, new JsonBodyHandler<>(APOD.class));
+        client
         return result;
     }
 
