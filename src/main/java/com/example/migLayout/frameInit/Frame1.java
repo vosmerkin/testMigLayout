@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +26,14 @@ public class Frame1 {
     private JTextArea text;
     private JButton button1;
     private JButton button2;
+    private JButton createButton;
+    private JButton requestButton;
+    private JButton updateButton;
+    private JButton deleteButton;
+    private JTextArea createNameText;
+    private JTextArea requestNameText;
+    private JTextArea updateNameText;
+    private JTextArea deleteNameText;
 
     private CrudActions crudActions;
 
@@ -34,7 +44,6 @@ public class Frame1 {
 
     public void initialize() {
         frame = new JFrame();
-
         this.frame.setTitle("MigLayoutDemo");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setSize(600, 600);
@@ -42,37 +51,73 @@ public class Frame1 {
         this.frame.pack();
         this.frame.setLocationRelativeTo(null);
         this.frame.setVisible(true);
+        changeCreateButtonEnabledState();
+        changeRequestButtonEnabledState();
+        changeUpdateButtonEnabledState();
+        changeDeleteButtonEnabledState();
+    }
 
+    private void changeCreateButtonEnabledState() {
+        if (createNameText.getText().isEmpty()) {
+            createButton.setEnabled(false);
+        } else {
+            createButton.setEnabled(true);
+        }
+    }
+
+    private void changeRequestButtonEnabledState() {
+        if (requestNameText.getText().isEmpty()) {
+            requestButton.setEnabled(false);
+        } else {
+            requestButton.setEnabled(true);
+        }
+    }
+
+    private void changeUpdateButtonEnabledState() {
+        if (updateNameText.getText().isEmpty()) {
+            updateButton.setEnabled(false);
+        } else {
+            updateButton.setEnabled(true);
+        }
+    }
+
+    private void changeDeleteButtonEnabledState() {
+        if (deleteNameText.getText().isEmpty()) {
+            deleteButton.setEnabled(false);
+        } else {
+            deleteButton.setEnabled(true);
+        }
     }
 
     private JPanel jpanelCrud() {
-        JPanel panel = new JPanel(new MigLayout("wrap, debug", "[][][]", "[][][][][]"));
-        JButton createButton = new JButton("Create Entry");
+        JPanel panel = new JPanel(new MigLayout("wrap, fill, debug", "[][][]", "[][][][][]"));
+
+        createButton = new JButton("Create Entry");
         JLabel createNamelabel = new JLabel("Name");
-        JTextArea createNameText = new JTextArea(1, 10);
+        createNameText = new JTextArea(1, 10);
         panel.add(createButton);
         panel.add(createNamelabel);
         panel.add(createNameText);
 
-        JButton requestButton = new JButton("Request Entry");
+        requestButton = new JButton("Request Entry");
         JLabel requestNamelabel = new JLabel("Name");
-        JTextArea requestNameText = new JTextArea(1, 10);
+        requestNameText = new JTextArea(1, 10);
         requestNameText.setToolTipText("Comma delimited id and Name");
         panel.add(requestButton);
         panel.add(requestNamelabel);
         panel.add(requestNameText);
 
-        JButton updateButton = new JButton("Edit Name");
+        updateButton = new JButton("Edit Name");
         JLabel updateNamelabel = new JLabel("New Name");
-        JTextArea updateNameText = new JTextArea(1, 10);
+        updateNameText = new JTextArea(1, 10);
         panel.add(updateButton);
         panel.add(updateNamelabel);
         panel.add(updateNameText);
 
 
-        JButton deleteButton = new JButton("Delete Entry");
+        deleteButton = new JButton("Delete Entry");
         JLabel deleteNamelabel = new JLabel("Name");
-        JTextArea deleteNameText = new JTextArea(1, 10);
+        deleteNameText = new JTextArea(1, 10);
         panel.add(deleteButton);
         panel.add(deleteNamelabel);
         panel.add(deleteNameText);
@@ -132,6 +177,81 @@ public class Frame1 {
                     }
                 }.execute();
             }
+        });
+
+
+        createNameText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changeCreateButtonEnabledState();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changeCreateButtonEnabledState();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                changeCreateButtonEnabledState();
+            }
+
+
+        });
+
+        requestNameText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changeRequestButtonEnabledState();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changeRequestButtonEnabledState();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                changeRequestButtonEnabledState();
+            }
+
+
+        });
+        updateNameText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changeUpdateButtonEnabledState();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changeUpdateButtonEnabledState();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                changeUpdateButtonEnabledState();
+            }
+
+
+        });
+        deleteNameText.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changeDeleteButtonEnabledState();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changeDeleteButtonEnabledState();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                changeDeleteButtonEnabledState();
+            }
+
+
         });
 
         return panel;

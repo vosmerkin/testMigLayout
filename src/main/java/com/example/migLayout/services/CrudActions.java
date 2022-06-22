@@ -6,33 +6,35 @@ import javax.swing.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CrudActions {
 
-    public String createAction(String data ) throws IOException, InterruptedException {
+    public String createAction(String data) throws IOException, InterruptedException {
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
 
-        String result = new Curl.Builder(Adresses.CREATE)
-                .method(Curl.HttpMethod.POST)
-                .headers(map)
-                .data(data)
-                .create()
-                .call();
+        String result;
+//        result = new Curl.Builder(Adresses.CREATE)
+//                .method(Curl.HttpMethod.POST)
+//                .headers(map)
+//                .data(data)
+//                .create()
+//                .call();
 
 
-
-        var client = HttpClient.newHttpClient();
-
-        var request = HttpRequest.newBuilder(
-                        URI.create("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"))
-                .header("accept", "application/json")
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.CREATE))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(data))
                 .build();
-
-        var response = client.send(request, new JsonBodyHandler<>(APOD.class));
-        client
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        result = response.toString();
+        System.out.println(request);
+        System.out.println(response.body());
         return result;
     }
 
