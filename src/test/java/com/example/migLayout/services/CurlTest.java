@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CurlTest {
     private MockWebServer mockWebServer;
-    Curl curl;
-    Curl.Builder builder;
+    CurlBackendClient curl;
+    CurlBackendClient.Builder builder;
     Map<String, String> map;
     String data;
 
@@ -46,8 +46,8 @@ class CurlTest {
 
         data = "{\"id\" : null,\"name\" : \"Peter1\"}";
 
-        curl = new Curl.Builder(mockWebServer.url("/").toString())
-                .method(Curl.HttpMethod.PUT)
+        curl = new CurlBackendClient.Builder(mockWebServer.url("/").toString())
+                .method(CurlBackendClient.HttpMethod.PUT)
                 .headers(map)
                 .data(data)
                 .create();

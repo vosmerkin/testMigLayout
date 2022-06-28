@@ -1,9 +1,7 @@
 package com.example.migLayout.frameInit;
 
 import com.example.migLayout.entity.Name;
-import com.example.migLayout.services.CrudActions;
-import com.example.migLayout.services.DownloadUrl;
-import com.example.migLayout.services.ImportExport;
+import com.example.migLayout.services.*;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,9 +34,11 @@ public class Frame1 {
     private JTextArea deleteNameText;
 
     private CrudActions crudActions;
+    private BackendClient backendClient
 
     public Frame1() {
         initialize();
+        backendClient = new HttpBackendClient();
         crudActions = new CrudActions();
     }
 
@@ -132,7 +132,8 @@ public class Frame1 {
                     protected Object doInBackground() throws Exception {
                         log.info("createButton clicked");
                         Name name = new Name(createNameText.getText());
-                        String result = crudActions.createAction(name.toJson());
+//                        String result = crudActions.createAction(name.toJson());
+                        String result = backendClient.createAction(name.toJson());
                         responseText.setText(result);
                         return null;
                     }
@@ -145,7 +146,8 @@ public class Frame1 {
                     @Override
                     protected Object doInBackground() throws Exception {
                         log.info("requestButton clicked");
-                        String result = crudActions.requestAction(requestNameText.getText());
+//                        String result = crudActions.requestAction(requestNameText.getText());
+                        String result = backendClient.requestAction(requestNameText.getText());
                         responseText.setText(result);
                         return null;
                     }
@@ -158,7 +160,8 @@ public class Frame1 {
                     @Override
                     protected Object doInBackground() throws Exception {
                         log.info("updateButton clicked");
-                        String result = crudActions.updateAction(updateNameText.getText());
+//                        String result = crudActions.updateAction(updateNameText.getText());
+                        String result = backendClient.updateAction(updateNameText.getText());
                         responseText.setText(result);
                         return null;
                     }
@@ -171,7 +174,8 @@ public class Frame1 {
                     @Override
                     protected Object doInBackground() throws Exception {
                         log.info("deleteButton clicked");
-                        String result = crudActions.deleteAction(deleteNameText.getText());
+//                        String result = crudActions.deleteAction(deleteNameText.getText());
+                        String result = backendClient.deleteAction(deleteNameText.getText());
                         responseText.setText(result);
                         return null;
                     }

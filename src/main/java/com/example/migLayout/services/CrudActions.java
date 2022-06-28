@@ -39,8 +39,8 @@ public class CrudActions {
     }
 
     public String requestAction(String name) throws IOException, InterruptedException {
-        String result = new Curl.Builder(Adresses.REQUEST + name)
-                .method(Curl.HttpMethod.GET)
+        String result = new CurlBackendClient.Builder(Adresses.REQUEST + name)
+                .method(CurlBackendClient.HttpMethod.GET)
                 .create()
                 .call();
         return result;
@@ -60,8 +60,8 @@ public class CrudActions {
             name.setId(Integer.parseInt(idName[0]));
             Map<String, String> map = new HashMap<>();
             map.put("Content-Type", "application/json");
-            result = new Curl.Builder(Adresses.UPDATE)
-                    .method(Curl.HttpMethod.PUT)
+            result = new CurlBackendClient.Builder(Adresses.UPDATE)
+                    .method(CurlBackendClient.HttpMethod.PUT)
                     .headers(map)
                     .data(name.toJson())
                     .create()
@@ -71,8 +71,8 @@ public class CrudActions {
     }
 
     public String deleteAction(String name) throws IOException, InterruptedException {
-        String result = new Curl.Builder(Adresses.DELETE + name)
-                .method(Curl.HttpMethod.DELETE)
+        String result = new CurlBackendClient.Builder(Adresses.DELETE + name)
+                .method(CurlBackendClient.HttpMethod.DELETE)
                 .create()
                 .call();
         return result;
