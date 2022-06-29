@@ -104,42 +104,6 @@ public final class CurlBackendClient implements BackendClient {
         return responseStrBuilder.toString();
     }
 
-    public static class Builder {
-
-        private String endpoint;
-        private HttpMethod method;
-        private String data;
-        private Map<String, String> headers;
-
-        public Builder(String endpoint) {
-            this.endpoint = endpoint;
-        }
-
-        public Builder method(HttpMethod method) {
-            this.method = method;
-            return this;
-        }
-
-        public Builder data(String data) {
-            this.data = data;
-            return this;
-        }
-
-        public Builder headers(Map<String, String> headers) {
-            this.headers = headers;
-            return this;
-        }
-
-        public CurlBackendClient create() {
-            if (endpoint == null) {
-                throw new IllegalArgumentException("Endpoint cannot be null");
-            }
-            if (method == null) {
-                throw new IllegalArgumentException("HTTP method cannot be null");
-            }
-            return new CurlBackendClient(endpoint, method, data, headers);
-        }
-    }
 
     @Override
     public String createAction(String data) {
@@ -168,7 +132,7 @@ public final class CurlBackendClient implements BackendClient {
     }
 
     public String requestAction(String name)  {
-        String result = null;
+        String result;
         try {
             result = new Builder(Adresses.REQUEST + name)
                     .method(HttpMethod.GET)
@@ -238,4 +202,42 @@ public final class CurlBackendClient implements BackendClient {
         }
         return result;
     }
+
+    public static class Builder {
+
+        private String endpoint;
+        private HttpMethod method;
+        private String data;
+        private Map<String, String> headers;
+
+        public Builder(String endpoint) {
+            this.endpoint = endpoint;
+        }
+
+        public Builder method(HttpMethod method) {
+            this.method = method;
+            return this;
+        }
+
+        public Builder data(String data) {
+            this.data = data;
+            return this;
+        }
+
+        public Builder headers(Map<String, String> headers) {
+            this.headers = headers;
+            return this;
+        }
+
+        public CurlBackendClient create() {
+            if (endpoint == null) {
+                throw new IllegalArgumentException("Endpoint cannot be null");
+            }
+            if (method == null) {
+                throw new IllegalArgumentException("HTTP method cannot be null");
+            }
+            return new CurlBackendClient(endpoint, method, data, headers);
+        }
+    }
+
 }

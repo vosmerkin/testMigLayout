@@ -33,13 +33,13 @@ public class Frame1 {
     private JTextArea updateNameText;
     private JTextArea deleteNameText;
 
-    private CrudActions crudActions;
-    private BackendClient backendClient
+//    private CrudActions crudActions;
+    private BackendClient backendClient;
 
     public Frame1() {
         initialize();
         backendClient = new HttpBackendClient();
-        crudActions = new CrudActions();
+//        crudActions = new CrudActions();
     }
 
     public void initialize() {
@@ -47,7 +47,7 @@ public class Frame1 {
         this.frame.setTitle("MigLayoutDemo");
         this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.frame.setSize(600, 600);
-        this.frame.add(jpanelCrud(), BorderLayout.CENTER);
+        this.frame.add(jPanelCrud(), BorderLayout.CENTER);
         this.frame.pack();
         this.frame.setLocationRelativeTo(null);
         this.frame.setVisible(true);
@@ -58,68 +58,52 @@ public class Frame1 {
     }
 
     private void changeCreateButtonEnabledState() {
-        if (createNameText.getText().isEmpty()) {
-            createButton.setEnabled(false);
-        } else {
-            createButton.setEnabled(true);
-        }
+        createButton.setEnabled(!createNameText.getText().isEmpty());
     }
 
     private void changeRequestButtonEnabledState() {
-        if (requestNameText.getText().isEmpty()) {
-            requestButton.setEnabled(false);
-        } else {
-            requestButton.setEnabled(true);
-        }
+        requestButton.setEnabled(!requestNameText.getText().isEmpty());
     }
 
     private void changeUpdateButtonEnabledState() {
-        if (updateNameText.getText().isEmpty()) {
-            updateButton.setEnabled(false);
-        } else {
-            updateButton.setEnabled(true);
-        }
+        updateButton.setEnabled(!updateNameText.getText().isEmpty());
     }
 
     private void changeDeleteButtonEnabledState() {
-        if (deleteNameText.getText().isEmpty()) {
-            deleteButton.setEnabled(false);
-        } else {
-            deleteButton.setEnabled(true);
-        }
+        deleteButton.setEnabled(!deleteNameText.getText().isEmpty());
     }
 
-    private JPanel jpanelCrud() {
+    private JPanel jPanelCrud() {
         JPanel panel = new JPanel(new MigLayout("wrap, fill, debug", "[][][]", "[][][][][]"));
 
         createButton = new JButton("Create Entry");
-        JLabel createNamelabel = new JLabel("Name");
+        JLabel createNameLabel = new JLabel("Name");
         createNameText = new JTextArea(1, 10);
         panel.add(createButton);
-        panel.add(createNamelabel);
+        panel.add(createNameLabel);
         panel.add(createNameText);
 
         requestButton = new JButton("Request Entry");
-        JLabel requestNamelabel = new JLabel("Name");
+        JLabel requestNameLabel = new JLabel("Name");
         requestNameText = new JTextArea(1, 10);
         requestNameText.setToolTipText("Comma delimited id and Name");
         panel.add(requestButton);
-        panel.add(requestNamelabel);
+        panel.add(requestNameLabel);
         panel.add(requestNameText);
 
         updateButton = new JButton("Edit Name");
-        JLabel updateNamelabel = new JLabel("New Name");
+        JLabel updateNameLabel = new JLabel("New Name");
         updateNameText = new JTextArea(1, 10);
         panel.add(updateButton);
-        panel.add(updateNamelabel);
+        panel.add(updateNameLabel);
         panel.add(updateNameText);
 
 
         deleteButton = new JButton("Delete Entry");
-        JLabel deleteNamelabel = new JLabel("Name");
+        JLabel deleteNameLabel = new JLabel("Name");
         deleteNameText = new JTextArea(1, 10);
         panel.add(deleteButton);
-        panel.add(deleteNamelabel);
+        panel.add(deleteNameLabel);
         panel.add(deleteNameText);
 
         JTextArea responseText = new JTextArea(5, 30);
@@ -261,10 +245,10 @@ public class Frame1 {
         return panel;
     }
 
-    private JPanel jpanel1() {
+    private JPanel jPanel1() {
         JPanel panel = new JPanel(new MigLayout("debug"));
         button1 = new JButton("Get from file");
-        button2 = new JButton("Getfrom URL");
+        button2 = new JButton("Get from URL");
         text = new JTextArea(20, 20);
         panel.add(button1);
         panel.add(button2);
@@ -283,24 +267,13 @@ public class Frame1 {
                         try {
                             text.setText(du.getByUrl(URL));
                         } catch (IOException e) {
-                            log.info("Error donloading URl  {}.", e.toString());
-                            JOptionPane.showMessageDialog(null, "Error downloding", "InfoBox: " + "Error", JOptionPane.INFORMATION_MESSAGE);
+                            log.info("Error downloading URl  {}.", e.toString());
+                            JOptionPane.showMessageDialog(null, "Error downloading", "InfoBox: " + "Error", JOptionPane.INFORMATION_MESSAGE);
 //                            result = "Error downloading URL " + url;
                         }
                         return null;
                     }
                 }.execute();
-//                SwingUtilities.invokeLater(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        text.setText(du.getByUrl(URL));
-//                        try {
-//                            Thread.sleep(2000);
-//                        } catch (InterruptedException ex) {
-//                            throw new RuntimeException(ex);
-//                        }
-//                    }
-//                });
             }
         });
         return panel;
