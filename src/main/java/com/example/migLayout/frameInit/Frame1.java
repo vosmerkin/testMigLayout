@@ -38,7 +38,7 @@ public class Frame1 {
 
     public Frame1() {
         initialize();
-        backendClient = new HttpBackendClient();
+        backendClient = new CurlBackendClient();
 //        crudActions = new CrudActions();
     }
 

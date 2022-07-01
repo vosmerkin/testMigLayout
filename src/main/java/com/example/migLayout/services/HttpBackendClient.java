@@ -10,7 +10,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Map;
 
 public class HttpBackendClient implements BackendClient {
     private static final Logger log = LoggerFactory.getLogger(HttpBackendClient.class);
@@ -26,45 +25,26 @@ public class HttpBackendClient implements BackendClient {
         builder.uri(URI.create(address));
         if (!"".equals(header1) && !"".equals(header2)) {
             builder.header(header1, header2);
+        }else{
+            log.info ("Request error - wrong header");
         }
-
-        HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.CREATE))
-
-//                .POST(HttpRequest.BodyPublishers.ofString(data))
-//                .build();
         if ("GET".equals(method) || "".equals(method)){
-            request.GET();
+            builder.GET();
+        } else if ("POST".equals(method)&& !"".equals(data)){
+            builder.POST(HttpRequest.BodyPublishers.ofString(data));
+        } else if ("PUT".equals(method)) {
+            builder.PUT(HttpRequest.BodyPublishers.ofString(data));
+        } else if ("DELETE".equals(method)) {
+            builder.DELETE();
+        } else {
+            log.info ("Request error - wrong method");
         }
-        request.build();
+        HttpRequest request = builder.build();
         HttpResponse<String> response = null;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             result = response.body();
         } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-            result = "Request Error";
-            JOptionPane.showMessageDialog(null,
-                    "InfoBox: " + result,
-                    "HttpClient Error",
-                    JOptionPane.INFORMATION_MESSAGE);
-            log.debug(result);
-        }
-    }
-
-
-    public String createAction(String data) {
-        String result;
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.CREATE))
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(data))
-                .build();
-        HttpResponse<String> response = null;
-        try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            result = response.body();
-        } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
             result = "Request Error";
             JOptionPane.showMessageDialog(null,
                     "InfoBox: " + result,
@@ -73,6 +53,35 @@ public class HttpBackendClient implements BackendClient {
             log.debug(result);
         }
         return result;
+    }
+
+
+    public String createAction(String data) {
+//        String result;
+//        HttpClient client = HttpClient.newHttpClient();
+//        HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.CREATE))
+//                .header("Content-Type", "application/json")
+//                .POST(HttpRequest.BodyPublishers.ofString(data))
+//                .build();
+//        HttpResponse<String> response = null;
+//        try {
+//            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+//            result = response.body();
+//        } catch (IOException | InterruptedException e) {
+////            e.printStackTrace();
+//            result = "Request Error";
+//            JOptionPane.showMessageDialog(null,
+//                    "InfoBox: " + result,
+//                    "HttpClient Error",
+//                    JOptionPane.INFORMATION_MESSAGE);
+//            log.debug(result);
+//        }
+//        return result;
+        return request(Adresses.CREATE,
+                "Content-Type",
+                "application/json",
+                "POST",
+                data);
     }
 
     @Override
