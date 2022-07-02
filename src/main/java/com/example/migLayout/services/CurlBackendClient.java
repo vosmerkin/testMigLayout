@@ -113,10 +113,10 @@ public final class CurlBackendClient implements BackendClient {
     }
 
     public String request(String address,
-                           String header1,
-                           String header2,
-                           String method,
-                           String data) {
+                          String header1,
+                          String header2,
+                          String method,
+                          String data) {
         Builder builder = new Builder(address);
         String result;
 
@@ -124,23 +124,24 @@ public final class CurlBackendClient implements BackendClient {
             Map<String, String> map = new HashMap<>();
             map.put(header1, header2);
             builder.headers(map);
-        } else {
+        } else if (("".equals(header1) && !"".equals(header2)) ||
+                (!"".equals(header1) && "".equals(header2))) {
             log.info("Request error - wrong header");
         }
-            if ("GET".equals(method) || "".equals(method)){
-                builder.method(HttpMethod.GET);
-            } else if ("POST".equals(method)){
-                builder.method(HttpMethod.POST);
-            } else if ("PUT".equals(method)) {
-                builder.method(HttpMethod.PUT);
-            } else if ("DELETE".equals(method)) {
-                builder.method(HttpMethod.DELETE);
-            } else {
-                log.info ("Request error - wrong method");
-            }
-            if ( !"".equals(data)) {
-                builder.data(data);
-            }
+        if ("GET".equals(method) || "".equals(method)) {
+            builder.method(HttpMethod.GET);
+        } else if ("POST".equals(method)) {
+            builder.method(HttpMethod.POST);
+        } else if ("PUT".equals(method)) {
+            builder.method(HttpMethod.PUT);
+        } else if ("DELETE".equals(method)) {
+            builder.method(HttpMethod.DELETE);
+        } else {
+            log.info("Request error - wrong method");
+        }
+        if (!"".equals(data)) {
+            builder.data(data);
+        }
         try {
             result = builder.create().call();
         } catch (IOException | InterruptedException e) {
@@ -153,8 +154,8 @@ public final class CurlBackendClient implements BackendClient {
             log.debug(result);
         }
         return result;
-            
-        }
+
+    }
 
     @Override
     public String createAction(String data) {
@@ -185,7 +186,7 @@ public final class CurlBackendClient implements BackendClient {
                 data);
     }
 
-    public String requestAction(String name)  {
+    public String requestAction(String name) {
         String result;
         try {
             result = new Builder(Adresses.REQUEST + name)

@@ -126,29 +126,30 @@ public class HttpBackendClient implements BackendClient {
     }
 
     public String request(String address,
-                           String header1,
-                           String header2,
-                           String method,
-                           String data){
+                          String header1,
+                          String header2,
+                          String method,
+                          String data) {
         String result;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         builder.uri(URI.create(address));
         if (!"".equals(header1) && !"".equals(header2)) {
             builder.header(header1, header2);
-        }else{
-            log.info ("Request error - wrong header");
+        } else if (("".equals(header1) && !"".equals(header2)) ||
+                (!"".equals(header1) && "".equals(header2))) {
+            log.info("Request error - wrong header");
         }
-        if ("GET".equals(method) || "".equals(method)){
+        if ("GET".equals(method) || "".equals(method)) {
             builder.GET();
-        } else if ("POST".equals(method)&& !"".equals(data)){
+        } else if ("POST".equals(method) && !"".equals(data)) {
             builder.POST(HttpRequest.BodyPublishers.ofString(data));
         } else if ("PUT".equals(method)) {
             builder.PUT(HttpRequest.BodyPublishers.ofString(data));
         } else if ("DELETE".equals(method)) {
             builder.DELETE();
         } else {
-            log.info ("Request error - wrong method");
+            log.info("Request error - wrong method");
         }
         HttpRequest request = builder.build();
         HttpResponse<String> response = null;
