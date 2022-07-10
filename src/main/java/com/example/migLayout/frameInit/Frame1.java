@@ -2,6 +2,8 @@ package com.example.migLayout.frameInit;
 
 import com.example.migLayout.entity.Name;
 import com.example.migLayout.services.*;
+import com.example.migLayout.services.backEndClient.BackendClient;
+import com.example.migLayout.services.backEndClient.CurlBackendClient;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ public class Frame1 {
     private JTextArea updateNameText;
     private JTextArea deleteNameText;
 
-//    private CrudActions crudActions;
+    //    private CrudActions crudActions;
     private BackendClient backendClient;
 
     public Frame1() {
@@ -116,8 +118,7 @@ public class Frame1 {
                     protected Object doInBackground() throws Exception {
                         log.info("createButton clicked");
                         Name name = new Name(createNameText.getText());
-//                        String result = crudActions.createAction(name.toJson());
-                        String result = backendClient.createAction(name.toJson());
+                        String result = backendClient.createAction(name);
                         responseText.setText(result);
                         return null;
                     }
@@ -144,8 +145,20 @@ public class Frame1 {
                     @Override
                     protected Object doInBackground() throws Exception {
                         log.info("updateButton clicked");
+                        String result;
+                        String[] idName = updateNameText.getText().split(",");
+                        if ("".equals(updateNameText.getText()) || (idName.length != 2)) {
+                            result = "Id/Name Error";
+                            JOptionPane.showMessageDialog(null,
+                                    "InfoBox: " + result,
+                                    "CurlClient Error",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            Name name = new Name(idName[1]);
+                            name.setId(Integer.parseInt(idName[0]));
 //                        String result = crudActions.updateAction(updateNameText.getText());
-                        String result = backendClient.updateAction(updateNameText.getText());
+                            result = backendClient.updateAction(name);
+                        }
                         responseText.setText(result);
                         return null;
                     }

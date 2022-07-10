@@ -1,5 +1,6 @@
 package com.example.migLayout.services;
 
+import com.example.migLayout.services.backEndClient.CurlBackendClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,11 +47,14 @@ class CurlTest {
 
         data = "{\"id\" : null,\"name\" : \"Peter1\"}";
 
-        curl = new CurlBackendClient.Builder(mockWebServer.url("/").toString())
-                .method(CurlBackendClient.HttpMethod.PUT)
-                .headers(map)
-                .data(data)
-                .create();
+//        curl = new CurlBackendClient.Builder(mockWebServer.url("/").toString())
+//                .method(CurlBackendClient.HttpMethod.PUT)
+//                .headers(map)
+//                .data(data)
+//                .create();
+
+        curl = new CurlBackendClient(mockWebServer.url("/").toString(), CurlBackendClient.HttpMethod.PUT,data,map);
+
 
 
         String result = null;

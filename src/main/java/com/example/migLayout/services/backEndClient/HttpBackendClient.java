@@ -1,6 +1,7 @@
-package com.example.migLayout.services;
+package com.example.migLayout.services.backEndClient;
 
 import com.example.migLayout.entity.Name;
+import com.example.migLayout.services.Adresses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,50 +11,121 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
+
+import static java.util.Objects.isNull;
 
 public class HttpBackendClient implements BackendClient {
     private static final Logger log = LoggerFactory.getLogger(HttpBackendClient.class);
 
-    public String createAction(String data) {
-//        String result;
-//        HttpClient client = HttpClient.newHttpClient();
-//        HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.CREATE))
-//                .header("Content-Type", "application/json")
-//                .POST(HttpRequest.BodyPublishers.ofString(data))
-//                .build();
-//        HttpResponse<String> response = null;
-//        try {
-//            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//            result = response.body();
-//        } catch (IOException | InterruptedException e) {
-////            e.printStackTrace();
-//            result = "Request Error";
-//            JOptionPane.showMessageDialog(null,
-//                    "InfoBox: " + result,
-//                    "HttpClient Error",
-//                    JOptionPane.INFORMATION_MESSAGE);
-//            log.debug(result);
-//        }
-//        return result;
-        return request(Adresses.CREATE,
-                "Content-Type",
-                "application/json",
-                "POST",
-                data);
+    private final String endpoint;
+
+    private final HttpMethod method;
+
+    private final String data;
+    private final Map<String, String> headers;
+
+    private HttpClient client = HttpClient.newHttpClient();
+    private HttpRequest request;
+
+    public HttpBackendClient() {
+        this.endpoint = null;
+        this.method = null;
+        this.data = null;
+        this.headers = null;
+    }
+
+    public HttpBackendClient(String endpoint, HttpMethod method, String data, Map<String, String> headers) {
+        this.endpoint = endpoint;
+        this.method = method;
+        this.data = data;
+        this.headers = headers;
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+        builder.uri(URI.create(endpoint));
+
+        if (headers != null && !headers.isEmpty()) {
+            headers.keySet().forEach(s -> builder.header(s, headers.get(s)));
+        }
+        if (HttpMethod.GET.equals(method) || isNull(method)) {
+            builder.GET();
+        } else if (HttpMethod.POST.equals(method) && !"".equals(data)) {
+            builder.POST(HttpRequest.BodyPublishers.ofString(data));
+        } else if (HttpMethod.PUT.equals(method)) {
+            builder.PUT(HttpRequest.BodyPublishers.ofString(data));
+        } else if (HttpMethod.DELETE.equals(method)) {
+            builder.DELETE();
+        } else {
+            log.info("Request error - wrong method");
+        }
+        request = builder.build();
+
+
+    }
+
+    public String call() throws IOException, InterruptedException {
+        String result;
+        HttpResponse<String> response = null;
+        response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        result = response.body();
+        return result;
+    }
+
+
+    public String createAction(Name data) {
+        String result;
+
+        request = HttpRequest.newBuilder(URI.create(Adresses.CREATE))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(data.toJson()))
+                .build();
+        try {
+            result = this.call();
+        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+            result = "Request Error";
+            JOptionPane.showMessageDialog(null,
+                    "InfoBox: " + result,
+                    "HttpClient Error",
+                    JOptionPane.INFORMATION_MESSAGE);
+            log.debug(result);
+        }
+        return result;
+//        return request(Adresses.CREATE,
+//                "Content-Type",
+//                "application/json",
+//                "POST",
+//                data);
     }
 
     @Override
     public String requestAction(String name) {
         String result;
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.REQUEST + name))
-//                .header("Content-Type", "application/json")
+        request = HttpRequest.newBuilder(URI.create(Adresses.REQUEST + name))
                 .GET()
                 .build();
-        HttpResponse<String> response = null;
         try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            result = response.body();
+            result = this.call();
+        } catch (IOException | InterruptedException e) {
+            result = "Request Error";
+            JOptionPane.showMessageDialog(null,
+                    "InfoBox: " + result,
+                    "HttpClient Error",
+                    JOptionPane.INFORMATION_MESSAGE);
+            log.debug(result);
+        }
+        return result;
+    }
+
+    @Override
+    public String updateAction(Name data) {
+        String result;
+        request = HttpRequest.newBuilder(URI.create(Adresses.UPDATE))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(data.toJson()))
+                .build();
+        try {
+            result = this.call();
         } catch (IOException | InterruptedException e) {
 //            e.printStackTrace();
             result = "Request Error";
@@ -67,52 +139,14 @@ public class HttpBackendClient implements BackendClient {
     }
 
     @Override
-    public String updateAction(String data) {
-        String[] idName = data.split(",");
-        String result;
-        if ("".equals(data) || (idName.length != 2)) {
-            result = "Id/Name Error";
-            JOptionPane.showMessageDialog(null,
-                    "InfoBox: " + result,
-                    "HttpClient Error",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            Name name = new Name(idName[1]);
-            name.setId(Integer.parseInt(idName[0]));
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.UPDATE))
-                    .header("Content-Type", "application/json")
-                    .PUT(HttpRequest.BodyPublishers.ofString(name.toJson()))
-                    .build();
-            HttpResponse<String> response = null;
-            try {
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                result = response.body();
-            } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-                result = "Request Error";
-                JOptionPane.showMessageDialog(null,
-                        "InfoBox: " + result,
-                        "HttpClient Error",
-                        JOptionPane.INFORMATION_MESSAGE);
-                log.debug(result);
-            }
-        }
-        return result;
-    }
-
-    @Override
     public String deleteAction(String name) {
         String result;
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(URI.create(Adresses.DELETE + name))
+        request = HttpRequest.newBuilder(URI.create(Adresses.DELETE + name))
                 .header("Content-Type", "application/json")
                 .DELETE()
                 .build();
-        HttpResponse<String> response = null;
         try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            result = response.body();
+            result = this.call();
         } catch (IOException | InterruptedException e) {
 //            e.printStackTrace();
             result = "Request Error";

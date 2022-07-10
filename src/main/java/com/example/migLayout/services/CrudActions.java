@@ -1,6 +1,7 @@
 package com.example.migLayout.services;
 
 import com.example.migLayout.entity.Name;
+import com.example.migLayout.services.backEndClient.CurlBackendClient;
 
 import javax.swing.*;
 import java.io.IOException;

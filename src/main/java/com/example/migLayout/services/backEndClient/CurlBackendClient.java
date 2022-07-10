@@ -1,6 +1,7 @@
-package com.example.migLayout.services;
+package com.example.migLayout.services.backEndClient;
 
 import com.example.migLayout.entity.Name;
+import com.example.migLayout.services.Adresses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +18,6 @@ import java.util.Map;
 public final class CurlBackendClient implements BackendClient {
 
     private static final Logger log = LoggerFactory.getLogger(CurlBackendClient.class);
-
-    public enum HttpMethod {GET, PUT, POST, DELETE}
 
     private final String endpoint;
 
@@ -91,7 +90,7 @@ public final class CurlBackendClient implements BackendClient {
         return doCurl(command.toArray(new String[0]));
     }
 
-    private String doCurl(String[] args) throws IOException, InterruptedException {
+    private String doCurl(String[] args) throws IOException {
         Process process = new ProcessBuilder(args)
 //                .redirectErrorStream(true)
                 .start();
@@ -124,8 +123,7 @@ public final class CurlBackendClient implements BackendClient {
             Map<String, String> map = new HashMap<>();
             map.put(header1, header2);
             builder.headers(map);
-        } else if (("".equals(header1) && !"".equals(header2)) ||
-                (!"".equals(header1) && "".equals(header2))) {
+        } else if ("".equals(header1) && !"".equals(header2) || !"".equals(header1)) {
             log.info("Request error - wrong header");
         }
         if ("GET".equals(method) || "".equals(method)) {
@@ -158,32 +156,33 @@ public final class CurlBackendClient implements BackendClient {
     }
 
     @Override
-    public String createAction(String data) {
-//        Map<String, String> map = new HashMap<>();
-//        map.put("Content-Type", "application/json");
-//        String result;
-//        try {
-//            result = new Builder(Adresses.CREATE)
-//                    .method(HttpMethod.POST)
-//                    .headers(map)
-//                    .data(data)
-//                    .create()
-//                    .call();
-//        } catch (IOException | InterruptedException e) {
-////            e.printStackTrace();
-//            result = "Request Error";
-//            JOptionPane.showMessageDialog(null,
-//                    "InfoBox: " + result,
-//                    "CurlClient Error",
-//                    JOptionPane.INFORMATION_MESSAGE);
-//            log.debug(result);
-//        }
-//        return result;
-        return request(Adresses.CREATE,
-                "Content-Type",
-                "application/json",
-                "POST",
-                data);
+    public String createAction(Name data) {
+        Map<String, String> map = new HashMap<>();
+        map.put("Content-Type", "application/json");
+        String result;
+
+        try {
+            result = new Builder(Adresses.CREATE)
+                    .method(HttpMethod.POST)
+                    .headers(map)
+                    .data(data.toJson())
+                    .create()
+                    .call();
+        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+            result = "Request Error";
+            JOptionPane.showMessageDialog(null,
+                    "InfoBox: " + result,
+                    "CurlClient Error",
+                    JOptionPane.INFORMATION_MESSAGE);
+            log.debug(result);
+        }
+        return result;
+//        return request(Adresses.CREATE,
+//                "Content-Type",
+//                "application/json",
+//                "POST",
+//                data);
     }
 
     public String requestAction(String name) {
@@ -205,36 +204,25 @@ public final class CurlBackendClient implements BackendClient {
         return result;
     }
 
-    public String updateAction(String data) {
-        String[] idName = data.split(",");
+    public String updateAction(Name data) {
         String result;
-        if ("".equals(data) || (idName.length != 2)) {
-            result = "Id/Name Error";
+        Map<String, String> map = new HashMap<>();
+        map.put("Content-Type", "application/json");
+        try {
+            result = new Builder(Adresses.UPDATE)
+                    .method(HttpMethod.PUT)
+                    .headers(map)
+                    .data(data.toJson())
+                    .create()
+                    .call();
+        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+            result = "Request Error";
             JOptionPane.showMessageDialog(null,
                     "InfoBox: " + result,
                     "CurlClient Error",
                     JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            Name name = new Name(idName[1]);
-            name.setId(Integer.parseInt(idName[0]));
-            Map<String, String> map = new HashMap<>();
-            map.put("Content-Type", "application/json");
-            try {
-                result = new Builder(Adresses.UPDATE)
-                        .method(HttpMethod.PUT)
-                        .headers(map)
-                        .data(name.toJson())
-                        .create()
-                        .call();
-            } catch (IOException | InterruptedException e) {
-//            e.printStackTrace();
-                result = "Request Error";
-                JOptionPane.showMessageDialog(null,
-                        "InfoBox: " + result,
-                        "CurlClient Error",
-                        JOptionPane.INFORMATION_MESSAGE);
-                log.debug(result);
-            }
+            log.debug(result);
         }
         return result;
     }
