@@ -2,6 +2,7 @@ package com.example.migLayout.services;
 
 import com.example.migLayout.entity.Name;
 import com.example.migLayout.services.backEndClient.CurlBackendClient;
+import com.example.migLayout.services.backEndClient.CurlClient;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -40,8 +41,8 @@ public class CrudActions {
     }
 
     public String requestAction(String name) throws IOException, InterruptedException {
-        String result = new CurlBackendClient.Builder(Adresses.REQUEST + name)
-                .method(CurlBackendClient.HttpMethod.GET)
+        String result = new CurlClient.Builder(Adresses.REQUEST + name)
+                .method(CurlClient.HttpMethod.GET)
                 .create()
                 .call();
         return result;
@@ -61,8 +62,8 @@ public class CrudActions {
             name.setId(Integer.parseInt(idName[0]));
             Map<String, String> map = new HashMap<>();
             map.put("Content-Type", "application/json");
-            result = new CurlBackendClient.Builder(Adresses.UPDATE)
-                    .method(CurlBackendClient.HttpMethod.PUT)
+            result = new CurlClient.Builder(Adresses.UPDATE)
+                    .method(CurlClient.HttpMethod.PUT)
                     .headers(map)
                     .data(name.toJson())
                     .create()
@@ -72,8 +73,8 @@ public class CrudActions {
     }
 
     public String deleteAction(String name) throws IOException, InterruptedException {
-        String result = new CurlBackendClient.Builder(Adresses.DELETE + name)
-                .method(CurlBackendClient.HttpMethod.DELETE)
+        String result = new CurlClient.Builder(Adresses.DELETE + name)
+                .method(CurlClient.HttpMethod.DELETE)
                 .create()
                 .call();
         return result;

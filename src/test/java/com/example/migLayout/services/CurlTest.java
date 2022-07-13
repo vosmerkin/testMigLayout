@@ -1,6 +1,7 @@
 package com.example.migLayout.services;
 
 import com.example.migLayout.services.backEndClient.CurlBackendClient;
+import com.example.migLayout.services.backEndClient.CurlClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CurlTest {
     private MockWebServer mockWebServer;
-    CurlBackendClient curl;
-    CurlBackendClient.Builder builder;
+    CurlClient curl;
+    CurlClient.Builder builder;
     Map<String, String> map;
     String data;
 
@@ -47,13 +48,13 @@ class CurlTest {
 
         data = "{\"id\" : null,\"name\" : \"Peter1\"}";
 
-//        curl = new CurlBackendClient.Builder(mockWebServer.url("/").toString())
-//                .method(CurlBackendClient.HttpMethod.PUT)
-//                .headers(map)
-//                .data(data)
-//                .create();
+        curl = new CurlClient.Builder(mockWebServer.url("/").toString())
+                .method(CurlClient.HttpMethod.PUT)
+                .headers(map)
+                .data(data)
+                .create();
 
-        curl = new CurlBackendClient(mockWebServer.url("/").toString(), CurlBackendClient.HttpMethod.PUT,data,map);
+//        curl = new CurlClient(mockWebServer.url("/").toString(), CurlBackendClient.HttpMethod.PUT,data,map);
 
 
 

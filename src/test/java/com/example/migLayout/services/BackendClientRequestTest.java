@@ -10,11 +10,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BackendClientRequestTest {
     public BackendClient backendClient;
+
     BackendClientRequestTest() {
     }
 
@@ -23,7 +23,7 @@ class BackendClientRequestTest {
         String address = "http://forum.ru-board.com/e.pl";
         Map<String, String> headers = new HashMap<>();
         headers.put("User-Agent", "Java-http-client/18.0.1.1");
-        backendClient = new CurlBackendClient(address,
+        backendClient = new HttpBackendClient(address,
                 BackendClient.HttpMethod.GET,
                 null,
                 headers);
@@ -48,7 +48,7 @@ class BackendClientRequestTest {
                 "SERVER_PROTOCOL => HTTP/1.0" +
                 "REQUEST_URI => /e.pl";
 
-        String result=backendClient.call()
+        String result = backendClient.call()
                 .replace("\n", "")
                 .replace("\r", "")
                 .replace("HTTP_ACCEPT => */*", "")

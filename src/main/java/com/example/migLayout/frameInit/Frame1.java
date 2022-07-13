@@ -4,6 +4,7 @@ import com.example.migLayout.entity.Name;
 import com.example.migLayout.services.*;
 import com.example.migLayout.services.backEndClient.BackendClient;
 import com.example.migLayout.services.backEndClient.CurlBackendClient;
+import com.example.migLayout.services.backEndClient.HttpBackendClient;
 import net.miginfocom.swing.MigLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

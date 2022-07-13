@@ -18,28 +18,26 @@ import static java.util.Objects.isNull;
 public class HttpBackendClient implements BackendClient {
     private static final Logger log = LoggerFactory.getLogger(HttpBackendClient.class);
 
-    private final String endpoint;
-
-    private final HttpMethod method;
-
-    private final String data;
-    private final Map<String, String> headers;
+//    private final String endpoint;
+//    private final HttpMethod method;
+//    private final String data;
+//    private final Map<String, String> headers;
 
     private HttpClient client = HttpClient.newHttpClient();
     private HttpRequest request;
 
-    public HttpBackendClient() {
-        this.endpoint = null;
-        this.method = null;
-        this.data = null;
-        this.headers = null;
+    public HttpBackendClient() {   //used in Frame1
+//        this.endpoint = null;
+//        this.method = null;
+//        this.data = null;
+//        this.headers = null;
     }
 
-    public HttpBackendClient(String endpoint, HttpMethod method, String data, Map<String, String> headers) {
-        this.endpoint = endpoint;
-        this.method = method;
-        this.data = data;
-        this.headers = headers;
+    public HttpBackendClient(String endpoint, HttpMethod method, String data, Map<String, String> headers) {   //used in test
+//        this.endpoint = endpoint;
+//        this.method = method;
+//        this.data = data;
+//        this.headers = headers;
 
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         builder.uri(URI.create(endpoint));
@@ -65,7 +63,7 @@ public class HttpBackendClient implements BackendClient {
 
     public String call() throws IOException, InterruptedException {
         String result;
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         response = client.send(request, HttpResponse.BodyHandlers.ofString());
         result = response.body();
         return result;
@@ -186,7 +184,7 @@ public class HttpBackendClient implements BackendClient {
             log.info("Request error - wrong method");
         }
         HttpRequest request = builder.build();
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
             result = response.body();

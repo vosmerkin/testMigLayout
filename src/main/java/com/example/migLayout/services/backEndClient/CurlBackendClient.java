@@ -6,117 +6,51 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public final class CurlBackendClient implements BackendClient {
 
     private static final Logger log = LoggerFactory.getLogger(CurlBackendClient.class);
 
-    private final String endpoint;
-
-    private final HttpMethod method;
-
-    private final String data;
-    private final Map<String, String> headers;
+    //    private final String endpoint;
+//    private final HttpMethod method;
+//    private final String data;
+//    private final Map<String, String> headers;
+    private CurlClient curlClient;
 
     public CurlBackendClient() {
-        this.endpoint = null;
-        this.method = null;
-        this.data = null;
-        this.headers = null;
+//        this.endpoint = null;
+//        this.method = null;
+//        this.data = null;
+//        this.headers = null;
     }
 
     public CurlBackendClient(String endpoint, HttpMethod method, String data, Map<String, String> headers) {
-        this.endpoint = endpoint;
-        this.method = method;
-        this.data = data;
-        this.headers = headers;
-    }
-
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-
-    public HttpMethod getMethod() {
-        return method;
-    }
-
-
-    public String getData() {
-        return data;
-    }
-
-
-    public Map<String, String> getHeaders() {
-        return headers;
+//        this.endpoint = endpoint;
+//        this.method = method;
+//        this.data = data;
+//        this.headers = headers;
+        curlClient = new CurlClient.Builder(endpoint)
+                .method(CurlClient.HttpMethod.valueOf(method.name()))
+                .headers(headers)
+                .data(data)
+                .create();
     }
 
 
     public String call() throws IOException, InterruptedException {
-        List<String> command = new ArrayList<>();
-
-        command.add("curl");
-        command.add("-s");
-        command.add("-X");
-        command.add(method.name());
-//        command.add("\"");
-        command.add(endpoint);
-//        command.add("\"");
-
-        if (headers != null && !headers.isEmpty()) {
-            StringBuilder builder = new StringBuilder();
-//            builder.append("\"");
-            headers.keySet().forEach(s -> builder.append(s).append(":").append(headers.get(s)));
-//            builder.append("\"");
-            command.add("-H");
-            command.add(builder.toString());
-        }
-
-        if (data != null) {
-            command.add("-d");
-//            command.add("\"" + data + "\"");
-            command.add(data);
-        }
-        log.info("curl command {}", command);
-        return doCurl(command.toArray(new String[0]));
+        return curlClient.call();
     }
 
-    private String doCurl(String[] args) throws IOException {
-        Process process = new ProcessBuilder(args)
-//                .redirectErrorStream(true)
-                .start();
-        String lines;
-//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"))) {
-//            lines = reader.lines().collect(Collectors.joining("\n"));
-//        }
-//        process.waitFor();
-        InputStream is = process.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        StringBuilder responseStrBuilder = new StringBuilder();
-
-        while ((lines = br.readLine()) != null) {
-            System.out.println("read line from curl command: " + lines);
-            responseStrBuilder.append(lines);
-        }
-        return responseStrBuilder.toString();
-    }
 
     public String request(String address,
                           String header1,
                           String header2,
                           String method,
                           String data) {
-        Builder builder = new Builder(address);
+        CurlClient.Builder builder = new CurlClient.Builder(address);
         String result;
 
         if (!"".equals(header1) && !"".equals(header2)) {
@@ -127,21 +61,22 @@ public final class CurlBackendClient implements BackendClient {
             log.info("Request error - wrong header");
         }
         if ("GET".equals(method) || "".equals(method)) {
-            builder.method(HttpMethod.GET);
+            builder.method(CurlClient.HttpMethod.GET);
         } else if ("POST".equals(method)) {
-            builder.method(HttpMethod.POST);
+            builder.method(CurlClient.HttpMethod.POST);
         } else if ("PUT".equals(method)) {
-            builder.method(HttpMethod.PUT);
+            builder.method(CurlClient.HttpMethod.PUT);
         } else if ("DELETE".equals(method)) {
-            builder.method(HttpMethod.DELETE);
+            builder.method(CurlClient.HttpMethod.DELETE);
         } else {
             log.info("Request error - wrong method");
         }
         if (!"".equals(data)) {
             builder.data(data);
         }
+        curlClient = builder.create();
         try {
-            result = builder.create().call();
+            result = curlClient.call();
         } catch (IOException | InterruptedException e) {
 //            e.printStackTrace();
             result = "Request Error";
@@ -152,7 +87,6 @@ public final class CurlBackendClient implements BackendClient {
             log.debug(result);
         }
         return result;
-
     }
 
     @Override
@@ -161,13 +95,13 @@ public final class CurlBackendClient implements BackendClient {
         map.put("Content-Type", "application/json");
         String result;
 
+        curlClient = new CurlClient.Builder(Adresses.CREATE)
+                .method(CurlClient.HttpMethod.POST)
+                .headers(map)
+                .data(data.toJson())
+                .create();
         try {
-            result = new Builder(Adresses.CREATE)
-                    .method(HttpMethod.POST)
-                    .headers(map)
-                    .data(data.toJson())
-                    .create()
-                    .call();
+            result = curlClient.call();
         } catch (IOException | InterruptedException e) {
 //            e.printStackTrace();
             result = "Request Error";
@@ -178,20 +112,15 @@ public final class CurlBackendClient implements BackendClient {
             log.debug(result);
         }
         return result;
-//        return request(Adresses.CREATE,
-//                "Content-Type",
-//                "application/json",
-//                "POST",
-//                data);
     }
 
     public String requestAction(String name) {
         String result;
+        curlClient = new CurlClient.Builder(Adresses.REQUEST + name)
+                .method(CurlClient.HttpMethod.GET)
+                .create();
         try {
-            result = new Builder(Adresses.REQUEST + name)
-                    .method(HttpMethod.GET)
-                    .create()
-                    .call();
+            result = curlClient.call();
         } catch (IOException | InterruptedException e) {
 //            e.printStackTrace();
             result = "Request Error";
@@ -208,13 +137,13 @@ public final class CurlBackendClient implements BackendClient {
         String result;
         Map<String, String> map = new HashMap<>();
         map.put("Content-Type", "application/json");
+        curlClient = new CurlClient.Builder(Adresses.UPDATE)
+                .method(CurlClient.HttpMethod.PUT)
+                .headers(map)
+                .data(data.toJson())
+                .create();
         try {
-            result = new Builder(Adresses.UPDATE)
-                    .method(HttpMethod.PUT)
-                    .headers(map)
-                    .data(data.toJson())
-                    .create()
-                    .call();
+            result = curlClient.call();
         } catch (IOException | InterruptedException e) {
 //            e.printStackTrace();
             result = "Request Error";
@@ -228,12 +157,12 @@ public final class CurlBackendClient implements BackendClient {
     }
 
     public String deleteAction(String name) {
-        String result = null;
+        String result;
+        curlClient = new CurlClient.Builder(Adresses.DELETE + name)
+                .method(CurlClient.HttpMethod.DELETE)
+                .create();
         try {
-            result = new Builder(Adresses.DELETE + name)
-                    .method(HttpMethod.DELETE)
-                    .create()
-                    .call();
+            result = curlClient.call();
         } catch (IOException | InterruptedException e) {
 //            e.printStackTrace();
             result = "Request Error";
@@ -246,41 +175,5 @@ public final class CurlBackendClient implements BackendClient {
         return result;
     }
 
-    public static class Builder {
-
-        private String endpoint;
-        private HttpMethod method;
-        private String data;
-        private Map<String, String> headers;
-
-        public Builder(String endpoint) {
-            this.endpoint = endpoint;
-        }
-
-        public Builder method(HttpMethod method) {
-            this.method = method;
-            return this;
-        }
-
-        public Builder data(String data) {
-            this.data = data;
-            return this;
-        }
-
-        public Builder headers(Map<String, String> headers) {
-            this.headers = headers;
-            return this;
-        }
-
-        public CurlBackendClient create() {
-            if (endpoint == null) {
-                throw new IllegalArgumentException("Endpoint cannot be null");
-            }
-            if (method == null) {
-                throw new IllegalArgumentException("HTTP method cannot be null");
-            }
-            return new CurlBackendClient(endpoint, method, data, headers);
-        }
-    }
 
 }
